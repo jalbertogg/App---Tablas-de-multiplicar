@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Tablas de Multiplicar</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Tablas Espaciales">
+<meta name="theme-color" content="#5b42d6">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
   /* ===================== NEUMORPHIC — PASTEL FRESH ===================== */
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@600;700;800&display=swap');
@@ -119,9 +126,9 @@
     opacity: .65;
   }
   .mode-btn:active { box-shadow: var(--neu-pressed); transform: scale(.97); }
-  .mode-btn .mode-icon { font-size: 28px; filter: grayscale(.8) opacity(.5); transition: all .2s; }
-  .mode-btn .mode-name { font-size: 12px; font-weight: 800; text-align: center; color: var(--muted); transition: color .2s; }
-  .mode-btn .mode-desc { font-size: 10px; color: var(--muted); text-align: center; line-height: 1.3; }
+  .mode-btn .mode-icon { font-size: 30px; filter: grayscale(.8) opacity(.5); transition: all .2s; }
+  .mode-btn .mode-name { font-size: 15px; font-weight: 800; text-align: center; color: var(--muted); transition: color .2s; font-family: 'Baloo 2', cursive; }
+  .mode-btn .mode-desc { font-size: 13px; color: var(--muted); text-align: center; line-height: 1.35; font-family: 'Nunito', sans-serif; font-weight: 700; }
   .mode-btn .sel-check { position: absolute; top: 7px; right: 8px; font-size: 13px; opacity: 0; transition: opacity .2s; }
 
   /* Selected: raised + full color + full opacity */
@@ -212,11 +219,12 @@
   /* Home button — solid bg so icon always has contrast */
   .game-home-btn {
     background: var(--surface); box-shadow: var(--neu-raised);
-    border: none; border-radius: 10px;
-    padding: 5px 9px; cursor: pointer; transition: all .2s;
-    font-size: 16px; line-height: 1; display: flex; align-items: center; gap: 4px;
+    border: none; border-radius: 12px;
+    padding: 0 12px; cursor: pointer; transition: all .2s;
+    font-size: 16px; line-height: 1; display: flex; align-items: center; gap: 5px;
+    height: 34px;
   }
-  .game-home-btn span.lbl { font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 800; color: var(--text2); }
+  .game-home-btn span.lbl { font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800; color: var(--text2); }
   .game-home-btn:active { box-shadow: var(--neu-pressed); transform: scale(.9); }
 
   .progress-wrap { flex: 1; }
@@ -227,9 +235,10 @@
   }
   .score-badge {
     background: var(--sunken); box-shadow: var(--neu-pressed);
-    border-radius: 12px; padding: 4px 12px;
+    border-radius: 12px; padding: 0 12px;
     font-family: 'Baloo 2', cursive; font-size: 16px; font-weight: 700;
     color: var(--accent2-text); min-width: 62px; text-align: center;
+    height: 34px; display: flex; align-items: center; justify-content: center;
   }
   .lives-row { display: flex; gap: 3px; }
   .life { font-size: 17px; transition: all .2s; }
@@ -413,6 +422,36 @@
 
   .level-badge { display: none; }
 
+  /* ── INSTALL BANNER ── */
+  .install-banner {
+    display: none;
+    width: 100%; max-width: 340px;
+    background: linear-gradient(135deg, #5b42d6, #7b40e0);
+    border-radius: var(--r-md); padding: 12px 16px;
+    flex-direction: row; align-items: center; gap: 12px;
+    box-shadow: 5px 5px 16px rgba(91,66,214,.3), -2px -2px 8px var(--shadow-light);
+    cursor: pointer; transition: all .2s;
+  }
+  .install-banner.visible { display: flex; }
+  .install-banner:active { transform: scale(.97); }
+  .install-banner-icon { font-size: 28px; flex-shrink: 0; }
+  .install-banner-text { flex: 1; }
+  .install-banner-title {
+    font-family: 'Baloo 2', cursive; font-size: 15px; font-weight: 700;
+    color: white; line-height: 1.2;
+  }
+  .install-banner-sub { font-size: 11px; color: rgba(255,255,255,.75); font-weight: 600; margin-top: 1px; }
+  .install-banner-btn {
+    background: white; color: #5b42d6;
+    border: none; border-radius: 10px; padding: 7px 14px;
+    font-family: 'Baloo 2', cursive; font-size: 13px; font-weight: 800;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  }
+  .install-banner-close {
+    font-size: 16px; color: rgba(255,255,255,.6); cursor: pointer;
+    padding: 0 0 0 4px; flex-shrink: 0; line-height: 1;
+  }
+
   @media (max-height: 640px) {
     .logo-emoji { font-size: 48px; }
     .logo-title { font-size: 22px; }
@@ -459,8 +498,8 @@
       <div class="mode-btn m3" onclick="selectMode('reverse')" id="modeReverse">
         <span class="sel-check">✔</span>
         <span class="mode-icon">🔄</span>
-        <span class="mode-name">¿Cuál es la operación?</span>
-        <span class="mode-desc">Ves el resultado, adivina la multiplicación</span>
+        <span class="mode-name">¿Qué operación es?</span>
+        <span class="mode-desc">Descubre la multiplicación</span>
       </div>
       <div class="mode-btn m4" onclick="selectMode('timed')" id="modeTimed">
         <span class="sel-check">✔</span>
@@ -484,8 +523,19 @@
     <div style="font-size:11px;color:var(--text2);font-weight:600;opacity:.7;">Ver historial →</div>
   </button>
 
+  <!-- Install banner -->
+  <div class="install-banner" id="installBanner">
+    <div class="install-banner-icon">📲</div>
+    <div class="install-banner-text">
+      <div class="install-banner-title">Instalar app</div>
+      <div class="install-banner-sub">Añadir a pantalla de inicio</div>
+    </div>
+    <button class="install-banner-btn" onclick="triggerInstall()">Instalar</button>
+    <span class="install-banner-close" onclick="dismissInstall()">✕</span>
+  </div>
+
   <div style="position:absolute;bottom:8px;left:0;right:0;font-size:10px;color:var(--muted);text-align:center;opacity:.6;">
-    Hecho con cariño por <a href="https://www.linkedin.com/in/josealbertogarciaguijarro" target="_blank" rel="noopener" style="color:var(--accent4-text);text-decoration:none;font-weight:700;">J.Alberto García</a>
+    Desarrollado por <a href="https://www.linkedin.com/in/josealbertogarciaguijarro" target="_blank" rel="noopener" style="color:var(--accent4-text);text-decoration:none;font-weight:700;">J.Alberto García</a>
   </div>
 
 </div>
@@ -1195,6 +1245,37 @@ function doReset() {
   renderRecordsScreen();
 }
 
+// ===== PWA INSTALL PROMPT =====
+let _deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  _deferredPrompt = e;
+  const banner = document.getElementById('installBanner');
+  if (banner) banner.classList.add('visible');
+});
+
+window.addEventListener('appinstalled', () => {
+  _deferredPrompt = null;
+  const banner = document.getElementById('installBanner');
+  if (banner) banner.classList.remove('visible');
+});
+
+function triggerInstall() {
+  if (!_deferredPrompt) return;
+  _deferredPrompt.prompt();
+  _deferredPrompt.userChoice.then(choice => {
+    _deferredPrompt = null;
+    const banner = document.getElementById('installBanner');
+    if (banner) banner.classList.remove('visible');
+  });
+}
+
+function dismissInstall() {
+  const banner = document.getElementById('installBanner');
+  if (banner) banner.classList.remove('visible');
+}
+
 // ===== INIT =====
 document.getElementById('homeRecord').textContent = record + ' pts';
 selectMode('options'); // preselect first mode on load
@@ -1231,5 +1312,15 @@ selectMode('options'); // preselect first mode on load
   </div>
 </div>
 
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log('SW registered'))
+      .catch(e => console.log('SW error', e));
+  });
+}
+</script>
 </body>
 </html>
