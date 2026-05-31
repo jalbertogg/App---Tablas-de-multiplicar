@@ -719,11 +719,12 @@ function generateQuestions() {
   for (const t of tbls) {
     for (let i = 1; i <= 10; i++) pool.push({ a: t, b: i, ans: t*i });
   }
-  // Shuffle and pick
-  const shuffled = pool.sort(() => Math.random()-.5);
-  const base = shuffled.slice(0, TOTAL_Q);
-  // For 'reverse' mode, wrap differently; for others same
-  return base;
+  // If pool smaller than TOTAL_Q, repeat until we have enough
+  let extended = [];
+  while (extended.length < TOTAL_Q) {
+    extended = extended.concat(pool.sort(() => Math.random()-.5));
+  }
+  return extended.sort(() => Math.random()-.5).slice(0, TOTAL_Q);
 }
 
 function getOptions(correct, allAnswers) {
