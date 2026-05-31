@@ -1,8 +1,9 @@
-const CACHE = 'tablas-v1';
+const CACHE = 'tablas-v2';
 const ASSETS = [
-  './tablas-multiplicar.html',
-  './manifest.json',
-  'https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap'
+  '/App---Tablas-de-multiplicar/tablas-multiplicar.html',
+  '/App---Tablas-de-multiplicar/manifest.json',
+  '/App---Tablas-de-multiplicar/icon-192.png',
+  '/App---Tablas-de-multiplicar/icon-512.png',
 ];
 
 self.addEventListener('install', e => {
@@ -21,6 +22,6 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match('./tablas-multiplicar.html')))
+    caches.match(e.request).then(cached => cached || fetch(e.request))
   );
 });
