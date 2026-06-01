@@ -546,10 +546,14 @@
   .install-banner-sub { font-size: 11px; color: rgba(255,255,255,.75); font-weight: 600; margin-top: 1px; }
   .install-banner-btn {
     background: white; color: #5b42d6;
-    border: none; border-radius: 10px; padding: 7px 14px;
-    font-family: 'Baloo 2', cursive; font-size: 13px; font-weight: 800;
+    border: none; border-radius: 10px; padding: 10px 18px;
+    font-family: 'Baloo 2', cursive; font-size: 15px; font-weight: 800;
     cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    box-shadow: 2px 2px 8px rgba(0,0,0,.15);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
+  .install-banner-btn:active { transform: scale(.95); background: #f0eeff; }
   .install-banner-close {
     font-size: 16px; color: rgba(255,255,255,.6); cursor: pointer;
     padding: 0 0 0 4px; flex-shrink: 0; line-height: 1;
