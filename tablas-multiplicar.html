@@ -804,11 +804,24 @@ function updateAllBtn() {
   if (startBtn) { startBtn.disabled = n === 0; }
 }
 
+let _tableFirstTap = true; // tracks if user hasn't tapped yet this session
+
 function toggleTable(n) {
   const btn = document.getElementById('t'+n);
-  const idx = selectedTables.indexOf(n);
-  if (idx >= 0) { selectedTables.splice(idx, 1); btn.classList.remove('active'); }
-  else { selectedTables.push(n); btn.classList.add('active'); }
+
+  if (_tableFirstTap && selectedTables.length === 10) {
+    // First tap: exclusive selection — only this table active
+    _tableFirstTap = false;
+    selectedTables = [n];
+    for (let i = 1; i <= 10; i++) {
+      document.getElementById('t'+i).classList.toggle('active', i === n);
+    }
+  } else {
+    // Subsequent taps: normal toggle
+    const idx = selectedTables.indexOf(n);
+    if (idx >= 0) { selectedTables.splice(idx, 1); btn.classList.remove('active'); }
+    else { selectedTables.push(n); btn.classList.add('active'); }
+  }
   updateAllBtn();
 }
 
@@ -818,12 +831,14 @@ function toggleAll() {
   document.querySelectorAll('.tbl-btn').forEach(b => b.classList.remove('active'));
   if (!allActive) {
     for (let i = 1; i <= 10; i++) { selectedTables.push(i); document.getElementById('t'+i).classList.add('active'); }
+    _tableFirstTap = true; // next tap on a table will be exclusive again
   }
   updateAllBtn();
 }
 
 function goTableSelect() {
   goScreen('tableSelect','home');
+  _tableFirstTap = true; // reset so first tap is always exclusive
   if (selectedTables.length === 0) { toggleAll(); }
   else { updateAllBtn(); }
 }
