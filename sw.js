@@ -1,4 +1,4 @@
-const CACHE = 'tablas-v2';
+const CACHE = 'tablas-v3';
 const ASSETS = [
   '/App---Tablas-de-multiplicar/tablas-multiplicar.html',
   '/App---Tablas-de-multiplicar/manifest.json',
