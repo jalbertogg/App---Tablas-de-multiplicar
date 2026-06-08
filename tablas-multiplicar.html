@@ -123,17 +123,15 @@
     padding: 14px 10px; cursor: pointer; transition: all .2s;
     display: flex; flex-direction: column; align-items: center; gap: 6px;
     font-family: 'Nunito', sans-serif; position: relative; overflow: hidden;
-    opacity: .65;
   }
-  .mode-btn:active { box-shadow: var(--neu-pressed); transform: scale(.97); }
-  .mode-btn .mode-icon { font-size: 30px; filter: grayscale(.8) opacity(.5); transition: all .2s; }
-  .mode-btn .mode-name { font-size: 15px; font-weight: 800; text-align: center; color: var(--muted); transition: color .2s; font-family: 'Baloo 2', cursive; }
+  .mode-btn:active { transform: scale(.97); }
+  .mode-btn .mode-icon { font-size: 30px; transition: all .2s; }
+  .mode-btn .mode-name { font-size: 15px; font-weight: 800; text-align: center; color: var(--text2); transition: color .2s; font-family: 'Baloo 2', cursive; }
   .mode-btn .mode-desc { font-size: 13px; color: var(--muted); text-align: center; line-height: 1.35; font-family: 'Nunito', sans-serif; font-weight: 700; }
   .mode-btn .sel-check { position: absolute; top: 7px; right: 8px; font-size: 13px; opacity: 0; transition: opacity .2s; }
 
-  /* Selected: raised + full color + full opacity */
-  .mode-btn.sel { background: var(--surface); box-shadow: var(--neu-raised); opacity: 1; }
-  .mode-btn.sel .mode-icon { filter: none; }
+  /* Selected: raised + color + tick */
+  .mode-btn.sel { background: var(--surface); box-shadow: var(--neu-raised); }
   .mode-btn.sel .sel-check { opacity: 1; }
 
   .mode-btn.m1.sel .mode-name, .mode-btn.m1.sel .sel-check { color: var(--accent1-text); }
@@ -447,24 +445,29 @@
   #tablesScreen { gap: 0; justify-content: flex-start; padding: 0; overflow: visible; }
 
   .tables-header {
-    width: 100%; padding: 10px 14px 18px;
+    width: 100%; padding: 10px 14px;
     display: flex; align-items: center;
     background: var(--surface);
-    box-shadow: 0 4px 12px var(--shadow-dark);
+    box-shadow: 0 3px 10px var(--shadow-dark);
     gap: 10px; z-index: 2; flex-shrink: 0;
-    position: relative; overflow: visible;
   }
-  /* Chips wrap: clips only horizontally, not vertically */
+  /* Chips outer: simple working scroll */
+  .tables-chips-outer {
+    flex: 1; overflow: hidden; position: relative;
+  }
   .tables-chips-wrap {
-    flex: 1; display: flex; gap: 6px;
-    overflow-x: auto; overflow-y: visible;
+    display: flex; gap: 6px;
+    overflow-x: auto; overflow-y: hidden;
     scrollbar-width: none; -ms-overflow-style: none;
-    /* Extra padding so shadows show on all sides */
-    padding: 8px 6px;
-    margin: -8px -6px;
-    /* Clip only on x axis using clip-path instead of overflow */
+    padding: 4px 2px 4px 0;
   }
   .tables-chips-wrap::-webkit-scrollbar { display: none; }
+  /* Gradient overlay — sits on top, pointer-events:none so scroll still works */
+  .tables-chips-fade-left {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 8px;
+    background: linear-gradient(to right, var(--surface), transparent);
+    z-index: 2; pointer-events: none;
+  }
   .table-chip {
     background: var(--sunken); box-shadow: var(--neu-pressed);
     border: none; border-radius: 20px; padding: 5px 12px;
@@ -479,8 +482,10 @@
 
   /* Swipe container */
   .tables-swipe-wrap {
-    flex: 1; overflow: hidden; width: 100%;
+    flex: 1; width: 100%;
+    overflow: hidden;
     position: relative;
+    min-height: 0;
   }
   .tables-swipe-track {
     display: flex; height: 100%;
@@ -488,9 +493,15 @@
     will-change: transform;
   }
   .table-panel {
-    min-width: 100%; height: 100%;
-    overflow-y: auto; -webkit-overflow-scrolling: touch;
+    min-width: 100%; width: 100%; height: 100%;
+    overflow-y: auto; overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
     padding: 16px 20px 24px;
+    display: flex; flex-direction: column; align-items: center; gap: 0;
+    box-sizing: border-box;
+  }
+  .table-panel::-webkit-scrollbar { display: none; }
     display: flex; flex-direction: column; align-items: center; gap: 0;
   }
 
@@ -1504,7 +1515,7 @@ function goToTable(idx) {
   // Scroll active chip into view
   const chips = document.getElementById('tablesChips');
   const activeChip = chips.children[currentTableIdx];
-  if (activeChip) activeChip.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+  if (activeChip) activeChip.scrollIntoView({behavior:'smooth', block:'nearest', inline:'nearest'});
   // Update dots
   document.querySelectorAll('.tables-dot').forEach((d,i) => {
     const isActive = i === currentTableIdx;
@@ -1621,7 +1632,10 @@ if ('serviceWorker' in navigator) {
   <div class="tables-header">
     <button class="game-home-btn" onclick="goScreen('home','tablesScreen')" title="Inicio">🏠 <span class="lbl">Inicio</span></button>
     <div class="game-header-divider"></div>
-    <div class="tables-chips-wrap" id="tablesChips"></div>
+    <div class="tables-chips-outer">
+      <div class="tables-chips-fade-left"></div>
+      <div class="tables-chips-wrap" id="tablesChips"></div>
+    </div>
   </div>
 
   <!-- Dots indicator -->
