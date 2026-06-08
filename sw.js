@@ -1,4 +1,4 @@
-const CACHE = 'tablas-v4';
+const CACHE = 'tablas-v5';
 const ASSETS = [
   '/App---Tablas-de-multiplicar/tablas-multiplicar.html',
   '/App---Tablas-de-multiplicar/manifest.json',
@@ -6,35 +6,32 @@ const ASSETS = [
   '/App---Tablas-de-multiplicar/icon-512.png',
 ];
 
-// Install: cache all assets
+// Install: cache assets and skip waiting immediately
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE)
       .then(c => c.addAll(ASSETS))
-      .then(() => self.skipWaiting()) // activate immediately, don't wait
+      .then(() => self.skipWaiting()) // Don't wait — activate immediately
   );
 });
 
-// Activate: delete old caches and take control immediately
+// Activate: delete old caches, take control of all clients immediately
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys()
       .then(keys => Promise.all(
         keys.filter(k => k !== CACHE).map(k => caches.delete(k))
       ))
-      .then(() => self.clients.claim()) // take control of all tabs immediately
+      .then(() => self.clients.claim()) // Take control without waiting for reload
   );
 });
 
-// Fetch strategy:
-// - HTML: network first, fall back to cache
-// - Everything else: cache first, fall back to network
+// Fetch: network first for HTML, cache first for assets
 self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url);
-  const isHTML = e.request.destination === 'document' || url.pathname.endsWith('.html');
+  const isHTML = e.request.destination === 'document' ||
+                 e.request.url.endsWith('.html');
 
   if (isHTML) {
-    // Network first for HTML — always tries to get fresh version
     e.respondWith(
       fetch(e.request)
         .then(res => {
@@ -45,7 +42,6 @@ self.addEventListener('fetch', e => {
         .catch(() => caches.match(e.request))
     );
   } else {
-    // Cache first for assets (icons, manifest)
     e.respondWith(
       caches.match(e.request)
         .then(cached => cached || fetch(e.request))
@@ -53,7 +49,7 @@ self.addEventListener('fetch', e => {
   }
 });
 
-// Listen for message from page to skip waiting
+// skipWaiting on message from page
 self.addEventListener('message', e => {
   if (e.data === 'skipWaiting') self.skipWaiting();
 });
